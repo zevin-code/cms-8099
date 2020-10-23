@@ -1,0 +1,480 @@
+<div>
+  <div class="category-content">
+    <div class="parent-content">
+      <div class="parent-cat-item">
+      </div>
+      <ul class="other-cat-list">
+      </ul>
+    </div>
+    <div class="child-content" id="myTabContent">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">编号</th>
+              <th scope="col">栏目名称</th>
+              <th scope="col">描述</th>
+              <th scope="col">文章数</th>
+              <th scope="col">操作</th>
+            </tr>
+          </thead>
+          <tbody id="child-content-list"></tbody>
+        </table>
+    </div>
+    <div class="add-content">
+      <span>新增栏目</span>
+      <form id="add-update-dorm">
+        <span>栏目名称：</span>
+        <input type="text" name="cat_name">
+        <span>父栏目（不设置此项即为创建新的父栏目）：</span>
+        <select id="form-select">
+          <option value="">请选择</option>
+        </select>
+        <span>描述：</span>
+        <textarea name="category-des" cols="20" rows="10"></textarea>
+        <div class="add-content-btn">
+          <input type="reset" value="重置">
+          <input type="submit" value="保存" id="btn-submit">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  $(function(){
+    var nowParentCategory = "";  // 全局变量：当前父栏目ID
+    var theParentName = "";      // 全局变量：当前父栏目名称
+    var theChildName = "";       // 全局变量：当前编辑中的子栏目名称
+    var theChildCategory = "";   // 全局变量：当前编辑中的子栏目ID
+    var addNewParent = "";       // 全局变量：新增父栏目时需要判断
+
+    // 绘制当前栏目管理版块的白色背景
+    $('.category-content').parentsUntil(".content-main").css({
+      "background-color":"#fff",
+      "border-radius":"6px",
+      "padding":"20px"
+    });
+
+    // 通过查询所有栏目信息筛选出父栏目，渲染父栏目列表，并更新表单信息
+    function loadCategory() {
+        $.get(baseURL+'/manager/category/findAllCategory',function(res){
+          $('.other-cat-list').empty();
+          $('#form-select').empty();
+          $('#form-select').append($('<option value="">请选择</option>'));
+          var oneCategory = res.data.filter(function(item){
+            // 过滤出父栏目为空的栏目
+            return !item.parent
+          })
+          // 渲染父栏目列表
+          oneCategory.forEach(function(item){
+            var col = $(`
+            <li value="`+item.id+`">
+              <span>`+item.name+`</span>
+              <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </li>
+            `);
+            $('.other-cat-list').append(col);
+          })
+          $('#add-update-dorm')[0].reset();
+          // 表单重置
+          $('#form-select').attr("style","opacity:1");
+          $('#form-select').removeAttr("disabled");
+          // 启用父栏目下拉框
+          loadAddForm(oneCategory);
+          // 更新表单父栏目信息
+          nowParentCategory = nowParentCategory?nowParentCategory:oneCategory[0].id;
+          // 操作完父栏目之后优先回到刚才的目标父栏目
+          // 若为初次渲染，则赋默认值：列表首项
+          theParentName = theParentName?theParentName:oneCategory[0].name;
+          // 初始化，全局变量赋值
+          loadTwoCategory(nowParentCategory);
+          // 更新二级栏目列表
+          // updateMoreCate(theParentName);
+          // 更新当前父栏目详情卡片
+
+          // 模拟点击（真模拟...）
+          $('.other-cat-list li:contains("'+theParentName+'")').css({
+            backgroundColor: '#f5f5f5',
+            color: '#8d59fd',
+            "font-weight": "bold"
+          });
+        })
+    };
+    loadCategory();
+    
+    // 更新表单中的父栏目选择框
+    function loadAddForm(oneCategory){
+      oneCategory.forEach(function(item){
+        var row = $('<option value="'+item.id+'">'+item.name+'</option>');
+        $('#form-select').append(row);
+      });
+    };
+
+    // 根据一级栏目筛选二级栏目，并更新当前父栏目的详细信息版块
+    function loadTwoCategory(oid){
+      $.get(baseURL + '/manager/category/findCategoryByParentId',{id:oid},function(res){
+        $('#child-content-list').empty();
+        res.data.forEach(function(item){
+          var row = $(`
+          <tr>
+            <td class="categoryID">`+item.id+`</td>
+            <td class="categoryName">`+item.name+`</td>
+            <td>`+item.comment+`</td>
+            <td>0</td>
+            <td>
+              <i class="fa fa-trash btn-del" aria-hidden="true"></i>
+              <i class="fa fa-pencil-square btn-update" aria-hidden="true" style="margin-left: 8px;"></i>
+            </td>
+          </tr>
+          `) 
+          $('#child-content-list').append(row);
+        })
+        updateMoreCate(theParentName);
+      })
+    }
+
+    // 父栏目列表的点击事件绑定
+    $('.other-cat-list').on({
+      click:function(){
+        $('.other-cat-list li').css({
+          backgroundColor: 'white',
+          color: '#b5b5b5',
+          "font-weight": "normal"
+        });
+        $(this).css({
+          backgroundColor: '#f5f5f5',
+          color: '#8d59fd',
+          "font-weight": "bold"
+        });
+        nowParentCategory = $(this).val(); 
+        // 更新当前父栏目的ID
+        theParentName = $(this).find('span').text(); 
+        // 更新当前父栏目的名称 
+        loadTwoCategory(nowParentCategory);
+        // 更新子栏目列表
+      }
+    },"li");
+
+    // 更新当前栏目详细信息卡片
+    function updateMoreCate(name){
+      var childCateNumber = $('#child-content-list')[0].childElementCount;
+      $.get(baseURL + '/manager/category/findCategoryByCategoryname',{name:name},res =>{
+        $('.parent-cat-item').empty();
+        var col = $(`
+          <div class="parent-cat-header">
+            <span>`+res.data.name+`</span>
+            <div class="parent-menu-right">
+              <i class="fa fa-trash btn-del" aria-hidden="true"></i>
+              <i class="fa fa-pencil-square btn-update" aria-hidden="true" style="margin-left: 8px;"></i>
+            </div>
+          </div>
+          <div class="parent-cat-des">`+res.data.comment+`</div>
+          <div class="parent-menu">
+            <div class="now-child-num">
+              <span>`+childCateNumber+`</span>
+              <div>子栏目</div>
+            </div>
+            <div class="now-article-num">
+              <span>0</span>
+              <div>文章</div>
+            </div>
+          </div>
+        `);
+        $('.parent-cat-item').append(col);
+      });
+    };
+
+    // 保存或更新二级栏目信息
+    // 根据ID参数是否有值来判断：
+    // 有值————更新；空值————新增。
+    // 保存为全局对象，更新完就置空
+    $("#btn-submit").click(function(event){
+      var cat_name = $('input[name=cat_name]').val();
+      if(addNewParent){
+        theParentName = cat_name;
+      }; // 修改了父栏目名称后及时更新全局变量：当前父栏目名称
+      var cat_des = $('textarea[name=category-des]').val();
+      var parent = $('#form-select').val();
+      var obj = {
+        id:parent?theChildCategory:addNewParent?nowParentCategory:"",
+        // 三目运算符，判断当前修改的是父或二级栏目
+        name:cat_name,
+        comment:cat_des,
+        no:'',
+        parentId:parent
+      };
+      $.ajax({
+        url:baseURL+'/manager/category/saveOrUpdateCategory',
+        method:'post',
+        data:obj,
+        success:function(res){
+          loadCategory();
+          // 重新加载页面信息
+          updateMessageInfo(res.message);
+          theChildName = "";  
+          // 置空全局对象：当前编辑的栏目名称
+          theChildCategory = "";
+          // 置空全局对象：当前编辑的栏目ID
+          addNewParent = "";
+          //全局变量：新增父栏目时需要判断
+        }
+      });
+      event.preventDefault();
+    });
+
+    // 更新消息提示框
+    function updateMessageInfo(message){
+      document.getElementById("messageTip-inner").innerText = message;
+      $('.header-right-messageTip').css({
+        visibility: 'visible'
+      });
+      setTimeout( function() {
+        $('.header-right-messageTip').css({
+          visibility: 'hidden'
+        });
+      }, 3000 );
+      // 3秒后隐藏消息提示框
+    };
+
+    // 删除父栏目
+    $('.parent-cat-item').on({
+      click:function(){
+        $.get(baseURL+'/manager/category/deleteCategoryById',{id:nowParentCategory},(res)=>{
+          nowParentCategory = "";  
+          // 置空全局对象：当前父栏目ID
+          theParentName = "";      
+          // 置空全局对象：当前父栏目名称
+          loadCategory();
+          updateMessageInfo(res.message);
+        });
+      }
+    },'.btn-del');
+
+    // 删除二级栏目
+    $('#child-content-list').on({
+      click:function(){
+        var nowID = $(this).closest('tr').find('.categoryID').text();
+        $.get(baseURL+'/manager/category/deleteCategoryById',{id:nowID},(res)=>{
+          loadTwoCategory(nowParentCategory);
+          updateMessageInfo(res.message);
+        });
+      }
+    },'.btn-del');
+
+    // 编辑父栏目信息，当前信息回填到表单
+    $('.parent-cat-item').on({
+      click:function(){
+        addNewParent = "1";
+        $.get(baseURL + '/manager/category/findCategoryByCategoryname',{name:theParentName},res =>{
+          $('input[name=cat_name]').val(res.data.name);
+          $('textarea[name=category-des]').val(res.data.comment);
+          $('#form-select').val("");
+          $('#form-select').attr({"style":"opacity:0.6","disabled":"disabled"});
+          // 禁用父栏目的父栏目选择框
+        });
+      }
+    },'.btn-update');
+
+    // 编辑二级栏目信息，当前信息回填到表单
+    $('#child-content-list').on({
+      click:function(){
+        theChildName = $(this).closest('tr').find('.categoryName').text();
+        theChildCategory = $(this).closest('tr').find('.categoryID').text();
+        $.get(baseURL + '/manager/category/findCategoryByCategoryname',{name:theChildName},res =>{
+          $('input[name=cat_name]').val(res.data.name);
+          $('textarea[name=category-des]').val(res.data.comment);
+          $('#form-select').val(res.data.parent.id);
+        });
+      }
+    },'.btn-update');
+    
+    
+  })
+</script>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  ul,li {
+    margin: 0;
+    list-style: none;
+  }
+
+  .category-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .parent-content,.child-content,.add-content {
+    height: 100%;
+  }
+
+  .parent-content {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .fa-trash,.fa-pencil-square {
+    color: #aaa;
+  }
+
+  .fa-trash:hover {
+    color: red;
+  }
+
+  .fa-pencil-square:hover {
+    color: #333;
+  }
+
+  .parent-cat-item {
+    width: 100%;
+    height: 152px;
+    background-color: #fff;
+    box-shadow: 4px 4px 10px #eee;
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .parent-cat-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 6px;
+  }
+
+  .parent-cat-item span {
+    font-size: 18px;
+    font-weight: bold;
+    color: #8d59fd;
+  }
+
+  .parent-menu {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    background-color: #f5f5f5;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+
+  .other-cat-list {
+    width: 100%;
+    color: #b5b5b5;
+    height: calc(100% - 172px);
+    background-color: #fff;
+    box-shadow: 4px 4px 10px #eee;
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .other-cat-list li {
+    height: 42px;
+    padding: 0 8px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .other-cat-list li:hover {
+    background-color: #f5f5f5;
+  }
+
+  .child-content {
+    width: 50%;
+    background-color: #fff;
+  }
+
+  .add-content {
+    width: 26%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .add-content>span {
+    font-size: 22px;
+    text-align: center;
+    font-weight: bold;
+    color: #8d59fd;
+  }
+
+  .add-content form {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-content: space-between;
+  }
+
+.add-content form>span {
+    display: block;
+    font-size: 14px;
+    color: #3a3a3a;
+}
+
+.add-content form>input:not(:last-child),.add-content form select {
+    display: block;
+    color: #3a3a3a;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    width: 100%;
+    height: 44px;
+    border: 0;
+    outline: none;
+    padding-left: 20px;
+    box-sizing: border-box;
+
+}
+
+.add-content form>input:not(:last-child):focus,.add-content form select:focus,.add-content form>textarea:focus {
+    background-color: #fff;
+    border: 1px solid #aaa;
+}
+
+.add-content form>textarea {
+  width: 100%;
+  height: 40%;
+  border: 0;
+  outline: none;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  padding:20px;
+}
+
+.add-content-btn {
+  width: 100%;
+  height: 44px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.add-content-btn>input {
+    display: inline-block;
+    color: #3a3a3a;
+    border-radius: 6px;
+    width: 49%;
+    height: 44px;
+    border: 0;
+    outline: none;
+}
+
+.add-content-btn>input:first-child {
+  background-color: #f5f5f5;
+}
+
+.add-content-btn>input:last-child {
+  background-color: #FFF86F;
+}
+
+</style>

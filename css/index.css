@@ -1,0 +1,167 @@
+/* 我们在这里设置index.html的样式和全局的样式 */
+/* 全局配置 */
+*{
+  padding: 0;
+  margin: 0;
+}
+
+html, body{
+  height: 100%;
+}
+
+ul,li {
+  list-style: none;
+}
+
+/* 整体区域高度 */
+.container-parent{
+  height: 100%;
+}
+
+/* 左侧区域样式 */
+.container-left{
+  height: 100%;
+  width: 250px;
+  background-color: #fff;
+  float: left;
+  display: flex;
+  justify-items: center;
+  flex-direction: column;
+  padding-top: 40px;
+}
+
+/* 左侧logo样式 */
+.container-left .header-logo{
+  text-align: center;
+  height: 50px;
+  background-color: #fff;
+}
+
+/* 左侧菜单栏样式 */
+.container-left nav{
+  height: calc(100% - 50px);
+  margin: 0 auto;
+
+}
+/* 左侧菜单栏选项的样式 */
+.container-left nav li{
+  line-height: 38px;
+  width: 184px;
+  border-radius: 19px;
+  font-size: 12px;
+  padding-left: 20px;
+  cursor: pointer;
+  color: #b4b4b4;
+  background-color: #fff;
+}
+/* 菜单栏选项hover样式 */
+.container-left nav li:hover{
+  background-color: #f5f5f5;
+  color: #8d59fd;
+}
+/* 菜单栏图标样式 */
+.container-left nav i{
+  font-size: 16px;
+}
+/* 菜单栏字体样式 */
+.container-left nav li span{
+  margin-left: 20px;
+}
+/* 右侧区域样式设置 */
+.container-right{
+  width: calc(100% - 250px);
+  height: 100%;
+  float: left;
+}
+/* 右侧头部区域样式 */
+.container-right .header-right{
+  background-color: #f5f5f5;
+  height: 100px;
+  padding: 0 20px 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title {
+  font-size: 26px;
+  color: #8d59fd;
+  display: block;
+  font-weight: bold;
+  margin: 30px 0 10px;
+}
+
+.header-des {
+  font-size: 14px;
+  color: #b4b4b4;
+}
+
+/* 右边内容区域样式 */
+.container-content{
+  height: calc(100% - 100px);
+  background-color:#f5f5f5;
+  padding: 20px;
+}
+/* 右侧内容区域主界面样式 */
+.content-main{
+  height: 100%;
+}
+/* 设置content-main里代码片段div的样式 */
+.content-main>div{
+  height: 100%;
+}
+
+.container-left>nav {
+  margin-top: 40px;
+  height: 40%;
+}
+
+.left-menu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.header-right-messageTip {
+  box-sizing: border-box;
+  height: 64px;
+  min-width: 172px;
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  color: #8d59fd;
+  visibility: hidden;
+}
+
+.header-right-messageTip i {
+  margin-right: 12px;
+}
+
+.header-right-user {
+  align-self: flex-start;
+  background: #fff;
+  height: 96px;
+  width: 252px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 0 0 6px 6px;
+}
+
+.admin-user {
+  font-size: 14px;
+  color: #b4b4b4;
+}
+
+.header-right-user img {
+  width: 38px;
+  height: 38px;
+  border-radius: 19px;
+
+}
+
+

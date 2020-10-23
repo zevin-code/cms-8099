@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>看点资讯</title>
+  <!-- 导入BootStrap的css -->
+  <link rel="stylesheet" href="./css/bootstrap-3.3.7/css/bootstrap.min.css">
+
+  <!-- 引入我们全局和首页的css -->
+  <link rel="stylesheet" href="./css/index.css">
+  
+  <!-- 导入font-awesome的css文件 -->
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+
+  
+  <!-- 引入jQuery -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.12.4/jquery.js"></script>
+
+  <!-- 引入BootStrap的js -->
+  <script src="./css/bootstrap-3.3.7/js/bootstrap.js"></script>
+
+  <!-- 引入我们自己的js文件 -->
+  <script src="./JS/index.js"></script>
+  <script src="./JS/ajax.js"></script>
+
+  <script src="http://cdn.highcharts.com.cn/highcharts/highcharts.js"></script>
+
+</head>
+<body>
+  <!-- 整体区域 -->
+  <div class="container-parent">
+    <!-- 左侧区域 -->
+    <div class="container-left">
+      <!-- 左侧logo -->
+      <div class="header-logo">
+        <!-- 图标 -->
+        <img src="./images/yun.png" width="86px" height="52px">
+        <!-- 标题 -->
+      </div>
+      <!-- 左侧菜单栏 -->
+      <nav>
+        <ul class="left-menu">
+          <li><i class="fa fa-home"></i><span>首页</span></li>
+          <li><i class="fa fa-clone"></i><span>栏目管理</span></li>
+          <li><i class="fa fa-map-o"></i><span>文章管理</span></li>
+          <li><i class="fa fa-user-circle"></i><span>用户管理</span></li>
+        </ul>
+      </nav>
+    </div>
+    <!-- 右侧区域 -->
+    <div class="container-right">
+      <!-- 右侧头部 -->
+      <div class="header-right">
+        <div class="header-right-text">
+          <span class="header-title">首页</span>
+          <span class="header-des">欢迎来到后台管理系统！</span>
+        </div>
+        <div class="header-right-messageTip">
+          <i class="fa fa-check-circle" aria-hidden="true"></i>
+          <div id="messageTip-inner">添加成功！</div>
+        </div>
+        <div class="header-right-user">
+          <img src="./images/zevin-logo.jpg">
+          <span class="admin-user">admin-zevin-1107</span>
+        </div>
+      </div>
+      <!-- 右侧内容区 -->
+      <div class="container-content">
+        <div class="content-main">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

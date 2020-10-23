@@ -1,0 +1,812 @@
+<div class="article-part">
+  <div class="article-menu">
+    <div class="article-menu-left">
+      <button class="btn-all"><input type="checkbox" />全选本页</button>
+      <button class="btn-delete">
+        <i class="fa fa-trash" aria-hidden="true"></i>批量删除
+      </button>
+    </div>
+    <div class="search-group">
+      <input
+        type="text"
+        class="search-input"
+        placeholder="请输入文章标题或关键字"
+      /><button class="btn-search">
+        <i class="fa fa-search" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade in active" id="admin">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">编号</th>
+            <th scope="col">文章标题</th>
+            <th scope="col">所属栏目</th>
+            <th scope="col">作者</th>
+            <th scope="col">发布时间</th>
+            <th scope="col">阅读次数</th>
+            <th scope="col">状态</th>
+            <th scope="col">操作</th>
+          </tr>
+        </thead>
+        <tbody id="article_table"></tbody>
+      </table>
+    </div>
+  </div>
+  <nav aria-label="Page navigation example" class="page-list">
+    <ul class="pagination"></ul>
+  </nav>
+  <div class="check-article-window">
+    <div class="article-all">
+      <div class="all-article-title common-title">做软件的需要上Computer Architecture这门课吗？</div>
+      <div class="all-article-info">
+        <div class="all-info-left">
+          <img class="all-info-head common-author-head"></img>
+          <div class="all-author-info">
+            <span class="common-author-name">张三</span>
+            <span class="all-publictime">2020-03-06 12:35:16</span>
+            <div class="article-footer">
+              <div class="article-good-number">
+                <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                <span>点赞128</span>
+              </div>
+              <div class="article-read-number">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+                <span>浏览7856</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="all-info-right">
+          <span style="display: inline;">所属栏目：</span>
+          <div>
+            <span class="child-cat">CSDN</span>
+            <span class="parent-cat">技术博客</span>
+          </div>
+        </div>
+      </div>
+      <div class="all-article-content common-content">
+        大家都在说这门课有多有用，上了面试拿Offer走上人生巅峰，战斗力提升走上人生巅峰，对同学装逼走上人生巅峰。我也是很现实的人，也想走上人生巅峰。但我就不给你说上完这门课能走上人生巅峰。因为这门课不爽。大家有没有经历过重大事件？ 
+      </div>
+    </div>
+    <div class="article-small">
+      <div class="article-small-item">
+        <div class="article-author-group">
+          <img class="common-author-head"/>
+          <div class="article-author-name common-author-name">佚名</div>
+          <div>
+            <span class="child-cat">CSDN</span>
+            <span class="parent-cat">技术博客</span>
+          </div>
+        </div>
+        <div class="article-title common-title">
+          做软件的需要上Computer Architecture这门课吗？
+        </div>
+        <div class="article-content">
+          <img  />
+          <p class="article-content-main common-content">
+            大家都在说这门课有多有用，上了面试拿Offer走上人生巅峰，战斗力提升走上人生巅峰，对同学装逼走上人生巅峰。我也是很现实的人，也想走上人生巅峰。但我就不给你说上完这门课能走上人生巅峰。因为这门课不爽。大家有没有经历过重大事件？
+          </p>
+        </div>
+        <div class="article-footer">
+          <div class="article-good-number">
+            <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+            <span>点赞128</span>
+          </div>
+          <div class="article-read-number">
+            <i class="fa fa-eye" aria-hidden="true"></i>
+            <span>浏览7856</span>
+          </div>
+          <div class="article-good-number">
+            <i class="fa fa-comments-o" aria-hidden="true"></i>
+            <span>评论23</span>
+          </div>
+        </div>
+      </div>
+      <div class="article-check">
+        <div class="article-check-header">
+          <div class="check-header-left">
+            <span>No.178</span>
+            <span><i class="fa fa-search" aria-hidden="true" style="margin-right: 8px;"></i>审核中</span>
+          </div>
+          <div class="check-header-right">
+            <button>本次</button><button>历史(0)</button>
+          </div>
+        </div>
+        <textarea name="check-content" id="" cols="30" rows="10" placeholder="这里输入您的审核回执信息..."></textarea>
+        <div class="article-check-btn">
+          <button type="submit" class="btn-return"><i class="fa fa-reply" aria-hidden="true" style="margin-right: 8px;"></i>返回文章列表</button>
+          <input type="submit" class="btn-check" value="继续修改">
+          <input type="submit" class="btn-pass" value="审核通过">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(function () {
+    let nowPage = 0;
+    let nowArticleID = 0;
+    const pageSize = 11;
+
+    // 时间处理函数
+    function dateParse(dataString) {
+      if (dataString) {
+        let date = new Date(dataString);
+        let Y = date.getFullYear() + "-";
+        let M =
+          (date.getMonth() + 1 < 10
+            ? "0" + (date.getMonth() + 1)
+            : date.getMonth() + 1) + "-";
+        let D =
+          (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " ";
+        let h =
+          (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
+          ":";
+        let m =
+          (date.getMinutes() < 10
+            ? "0" + date.getMinutes()
+            : date.getMinutes()) + ":";
+        let s =
+          date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+        return Y + M + D + h + m + s;
+      } else {
+        return "";
+      }
+    }
+
+      // 更新消息提示框
+    function updateMessageInfo(message){
+      document.getElementById("messageTip-inner").innerText = message;
+      $('.header-right-messageTip').css({
+        visibility: 'visible'
+      });
+      setTimeout( function() {
+        $('.header-right-messageTip').css({
+          visibility: 'hidden'
+        });
+      }, 3000 );
+      // 3秒后隐藏消息提示框
+    };
+
+    function loadArticle(page, key) {
+      var obj = {
+        page: page,
+        pageSize: pageSize,
+        keywords: key,
+      };
+      $.get(baseURL + "/manager/article/findArticle", obj, (res) => {
+        $(".pagination").empty();
+        $("tbody").empty();
+        // 计算页数
+        var pageNumber = Math.ceil(res.data.total / pageSize);
+        // 生成分页
+        for (var i = 1; i <= pageNumber; i++) {
+          var pagePoint = $(
+            `<li class="page-item"><a class="page-link" href="#">` +
+              i +
+              `</a></li>`
+          );
+          $(".pagination").append(pagePoint);
+        }
+        // 添加后一页按钮
+        $(".pagination").append(
+          $(`
+          <li id="next-page">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          `)
+        );
+        // 添加前一页按钮
+        $(".pagination").prepend(
+          $(`
+          <li id="front-page">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          `)
+        );
+
+        res.data.list.forEach((item) => {
+          var realTitle = item.title ? item.title : "无标题";
+          var realCategory = item.category ? item.category.name : "未知";
+          var realAuthor = item.author ? item.author.nickname : "佚名";
+          var realReadTime = item.readtimes ? item.readtimes : "0";
+          var realPublishTime = item.publishtime ? item.publishtime : "未知";
+          var realStatus = item.status ? item.status : "审核未通过";
+          var row = $(
+            `
+            <tr>S
+              <td><input type="checkbox"></td>
+              <td class="articleID">` +
+              item.id +
+              `</td>
+              <td>` +
+              realTitle +
+              `</td>
+              <td>` +
+              realCategory +
+              `</td>
+              <td>` +
+              realAuthor +
+              `</td>
+              <td>` +
+              realPublishTime +
+              `</td>
+              <td>` +
+              realReadTime +
+              `</td>
+              <td>` +
+              realStatus +
+              `</td>
+              <td>
+                <i class="fa fa-trash btn-del" aria-hidden="true"></i>
+                <i class="fa fa-arrows-alt btn-more-check" aria-hidden="true"></i>
+              </td>
+            </tr>
+            `
+          );
+          $("#article_table").append(row);
+        });
+      });
+    }
+    loadArticle(0);
+
+    // 点击分页
+    $(".pagination").on(
+      {
+        click: function () {
+          nowPage = $(this).text() - 1;
+          loadArticle(nowPage);
+        },
+      },
+      ".page-item"
+    );
+
+    // 点击分页(前一页)
+    $(".pagination").on(
+      {
+        click: function () {
+          if (nowPage > 0) {
+            nowPage -= 1;
+            loadArticle(nowPage);
+          }
+        },
+      },
+      "#front-page"
+    );
+
+    // 点击分页(后一页)
+    $(".pagination").on(
+      {
+        click: function () {
+          nowPage += 1;
+          loadArticle(nowPage);
+        },
+      },
+      "#next-page"
+    );
+
+    // 审核通过返回文章列表
+    $('.btn-pass').click(()=>{
+      var obj = {
+        id:nowArticleID,
+        status:"审核通过"
+      };
+      console.log(nowArticleID);
+      $.get(baseURL+'/manager/article/checkArticle',obj,(res)=>{
+        loadArticle(nowPage);
+        updateMessageInfo(res.message);
+        console.log(res.message);
+      });
+      $(".check-article-window").attr("style","visibility:hidden;");
+    });
+
+    // 审核通过返回文章列表
+    $('.btn-return').click(()=>{
+      $(".check-article-window").attr("style","visibility:hidden;");
+    });
+
+    // 按文章关键字搜索
+    $(".btn-search").on({
+      click: function () {
+        var search_key = $(".search-input").val();
+        loadArticle(0, search_key);
+      },
+    });
+
+    // 监听搜索框重新为空时，重载数据
+    $(".search-input").change(function () {
+      console.log("变化了");
+      if ($(".search-input").val() == "") {
+        loadArticle(nowPage, "");
+      }
+    });
+
+    // 删除文章
+    $("tbody").on(
+      {
+        click: function () {
+          var nowID = $(this).closest("tr").find(".articleID").text();
+          $.get(baseURL + "/manager/article/deleteArticleById",{id:nowID}, () => {
+            loadArticle(nowPage);
+          });
+        },
+      },
+      ".btn-del"
+    );
+
+    // 查看文章详情并审核
+    $("tbody").on({
+        click: function () {
+          // 重置小帖子有图的布局
+          $('.article-content>img').css({
+            display:"inline-block"
+          })
+          $('.article-content>p').css({
+            width:"calc(66% - 14px)",
+            "-webkit-line-clamp":"4"
+          })
+          $('.article-small-item').css({
+            height:"40%"
+          })
+          $('.article-content').css({
+            height:"46%"
+          })
+          $('.article-check').css({
+            height:"calc(60% - 14px)"
+          })
+          nowArticleID = $(this).closest("tr").find(".articleID").text();
+          // 查询所选文章的信息
+          $.get(baseURL + "/manager/article/findArticleById",{id: nowArticleID}, (res) => {
+            // 显示具体的审核界面
+            $(".check-article-window").attr("style","visibility:visible;");
+            // 定义信息替换函数（两处）
+            function loadArticleInfo(index,content){
+              Array.from(document.getElementsByClassName(index)).forEach(item => {
+                item.innerText = content;
+              });
+            };
+            // 题目
+            loadArticleInfo("common-title",res.data.title);
+            // 正文
+            loadArticleInfo("common-content",res.data.content);
+            // 发布时间
+            document.getElementsByClassName("all-publictime")[0].innerText = res.data.publishtime;
+            // 如果有作者信息，则渲染
+            if(res.data.author){
+              loadArticleInfo("common-author-name",res.data.author.nickname);
+              Array.from(document.getElementsByClassName("common-author-head")).forEach(item => {
+                item.style.backgroundImage = "url("+res.data.author.userface+")";
+              });
+            }else{
+              loadArticleInfo("common-author-name","佚名");
+            }
+            // 如果有栏目信息，则渲染
+            if(res.data.category){
+              loadArticleInfo("child-cat",res.data.category.name);
+              // 如果有父栏目id,则查询显示
+              if(res.data.category.parentId){
+                $('.parent-cat').attr("style","display:inline;");
+                $.get(baseURL+'/manager/category/findAllCategory',function(s){
+                  var thisArticleParent = s.data.filter(function(item){
+                    return item.id = res.data.category.parentId
+                  })[0].name;
+                  loadArticleInfo("parent-cat",thisArticleParent);
+                })
+              }else{ // 否则隐藏第二个栏目框
+                $('.parent-cat').attr("style","display:none;");
+              }       
+            }
+            // 是否有文章配图
+            if(res.data.source){
+              document.querySelector('.article-content>img').style.backgroundImage = "url("+res.data.source+")";
+            }else{
+              // 没有配图，则重新设置小帖子布局（两行正文）
+              $('.article-content>img').css({
+                display:"none"
+              })
+              $('.article-content>p').css({
+                width:"100%",
+                "-webkit-line-clamp":"2"
+              })
+              $('.article-small-item').css({
+                height:"30%"
+              })
+              $('.article-content').css({
+                height:"30%"
+              })
+              $('.article-check').css({
+                height:"calc(70% - 14px)"
+              })
+            }
+          });
+        },
+      },
+      ".btn-more-check"
+    );
+
+    // $('.tab-content').parentsUntil(".content-main").css({
+    //   "background-color":"#fff",
+    //   "border-radius":"6px",
+    //   "padding":"20px"
+    // });
+  });
+</script>
+
+<style>
+  .tab-content {
+    height: calc(100% - 60px);
+    width: 100%;
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 10px 20px;
+  }
+  .article-part {
+    position: relative;
+  }
+  .page-list {
+    position: absolute;
+    bottom: -14px;
+    right: 20px;
+  }
+
+  .article-menu {
+    display: flex;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .article-menu button {
+    outline: none;
+    height: 42px;
+    background-color: #fff;
+    border: 0;
+  }
+
+  .search-input {
+    outline: none;
+    height: 42px;
+    background-color: #fff;
+    border: 0;
+    box-sizing: border-box;
+    padding-left: 20px;
+    width: 300px;
+    border-radius: 6px 0 0 6px;
+  }
+
+  .btn-search {
+    width: 42px;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .btn-all {
+    margin-right: 12px;
+  }
+
+  .btn-all input {
+    margin-right: 10px;
+  }
+
+  .btn-all,
+  .btn-delete {
+    border-radius: 6px;
+    width: 122px;
+  }
+
+  .btn-del,.btn-more-check {
+    color: #aaa;
+    cursor: pointer;
+  }
+
+  .btn-del:hover {
+    color: red;
+  }
+
+  .btn-more-check {
+    font-size: 12px;
+  }
+
+  .btn-more-check:hover {
+    color: #333;
+  }
+
+  .search-group {
+    height: 42px;
+  }
+
+  .article-menu-left button:hover,
+  .search-group:hover {
+    box-shadow: 4px 4px 10px #ccc;
+  }
+
+  .fa-trash {
+    margin-right: 10px;
+  }
+
+  tbody .fa-trash:hover {
+    color: red;
+  }
+
+  .check-article-window {
+    height: 100%;
+    width: 100%;
+    float: left;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    visibility: hidden;
+  }
+
+  .article-all {
+    background-color: #fff;
+    height: 100%;
+    width: 56%;
+    border-radius: 6px;
+    padding: 20px;
+  }
+
+  .all-article-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .all-article-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f5f5f5;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    margin: 16px 0;
+    border-radius: 6px;
+  }
+
+  .all-info-left,.all-info-right {
+    display: flex;
+  }
+
+
+
+  .all-info-head {
+    height: 48px;
+    width: 48px;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-right: 12px;
+    background:no-repeat center;
+    background-size: cover;
+  }
+
+  .all-author-info span:first-child {
+    font-size: 14px;
+    color: #8d59fd;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+
+  .all-author-info span:nth-child(2) {
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  .article-small {
+    height: 100%;
+    width: calc(44% - 14px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .article-small-item {
+    height: 40%;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 10px 10px 20px #ddd;
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .article-author-group {
+    display: flex;
+    justify-content: start;
+    box-sizing: border-box;
+    align-items: center;
+  }
+
+  .article-author-name {
+    font-size: 14px;
+    color: #aaa;
+    margin: 0 10px;
+  }
+
+  .article-author-group img {
+    height: 25.6px;
+    width: 25.6px;
+    background-color: #ccc;
+    border-radius: 4px;
+    background:no-repeat center;
+    background-size: cover;
+  }
+
+  .child-cat,.parent-cat {
+    background-color: #8d59fd;
+    padding:4px 8px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 12px;
+
+  }
+
+  .article-title {
+    font-size: 18px;
+    font-weight: bold;
+    overflow: hidden;
+  }
+
+  .article-content {
+    height: 46%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .article-content img {
+    width: 34%;
+    border-radius: 6px;
+    background-color: #ccc;
+    background:no-repeat center;
+    background-size: cover;
+  }
+
+  .article-content p {
+    width: calc(62% - 14px);
+    height: 100%;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.8em;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .article-footer {
+    display: flex;
+    justify-content: start;
+    font-size: 14px;
+    color: #aaa;
+  }
+
+  .article-footer div:not(:first-child) {
+    margin-left: 20px;
+  }
+
+  .article-footer i {
+    display: inline;
+    font-size: 16px;
+  }
+
+  .article-check {
+    height: calc(60% - 14px);
+    width: 100%;
+    background-color: #fff;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px 20px;
+  }
+
+  .article-check-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .article-check-header span:first-child {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .article-check-header span:last-child {
+    font-size: 14px;
+    font-weight: bold;
+    color: orange;
+    margin-left: 12px;
+  }
+
+  .check-header-right button {
+    font-size: 14px;
+    width: 60px;
+    height: 32px;
+    border: 0;
+    outline: none;
+  }
+
+  .check-header-right button:first-child {
+    background-color: #8d59fd;
+    color: #fff;
+    border-radius: 6px 0 0 6px;
+  }
+
+  .check-header-right button:last-child {
+    background-color: #fff;
+    color: #aaa;
+    border-radius: 0 6px 6px 0;
+    border: 1px solid #8d59fd;
+  }
+  
+  .article-check-btn {
+    width: 100%;
+    height: 44px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .article-check-btn .btn-return {
+    width: 33%;
+    height: 100%;
+    border: 0;
+    outline: none;
+    background-color: #fff;
+    color: #8d59fd;
+    text-decoration: #8d59fd;
+  }
+
+  .article-check-btn .btn-pass {
+    width: calc(33% - 14px);
+    height: 100%;
+    border: 0;
+    outline: none;
+    background-color: #8d59fd;
+    color: #fff;
+    border-radius: 6px;
+  }
+
+  .article-check-btn .btn-check {
+    width: calc(33% - 14px);
+    height: 100%;
+    border: 0;
+    outline: none;
+    background-color: orange;
+    color: #fff;
+    border-radius: 6px;
+  }
+
+  .article-check textarea {
+    border: 0;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    outline: none;
+    padding: 20px;
+    height: 70%;
+    width: 100%;
+  }
+
+  .article-check textarea:focus {
+    background-color: #fff;
+    border: 1px solid #8d59fd;
+  }
+
+
+
+</style>
